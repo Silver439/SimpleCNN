@@ -6,14 +6,14 @@ extern conv_param conv_params[3];
 extern fc_param fc_params[1];
 
 float* mat_1d(Mat&);
-float* conv_relu(int,int,int,float*, conv_param);
+float* conv_relu(int, int, int, float*, conv_param);
 float* maxpool(int, int, int, float*);
 
 int main()
 {
-	Mat img = imread("11.jpg");
+	Mat img = imread("6.jpg");
 	float* res = mat_1d(img);
-	float* p0 = conv_relu(3,128,128,res,conv_params[0]);
+	float* p0 = conv_relu(3, 128, 128, res, conv_params[0]);
 	float* p1 = maxpool(16, 64, 64, p0);
 	float* p2 = conv_relu(16, 32, 32, p1, conv_params[1]);
 	float* p3 = maxpool(32, 32, 32, p2);
@@ -29,51 +29,49 @@ int main()
 	p5[1] += fc_params[0].p_bias[1];
 	float conf1, conf2;
 	conf1 = exp(p5[0]) / (exp(p5[0]) + exp(p5[1]));
-	conf2 = exp(p5[1])/ (exp(p5[0]) + exp(p5[1]));
+	conf2 = exp(p5[1]) / (exp(p5[0]) + exp(p5[1]));
 	if (conf1 > conf2) {
-		cout << "¶Ô²»Æð£¬ÄãÓÐ" << conf1*100 << "%" << "µÄ¸ÅÂÊ²»ÊÇÈË¡£" << endl;
+		cout << "å¯¹ä¸èµ·ï¼Œä½ æœ‰" << conf1 * 100 << "%" << "çš„æ¦‚çŽ‡ä¸æ˜¯äººã€‚" << endl;
 	}
 	else {
-		cout << "¹§Ï²£¡ÄãÓÐ" << conf2*100 << "%" << "µÄ¸ÅÂÊÊÇ¸öÈËÄØ£¡" << endl;
+		cout << "æ­å–œï¼ä½ æœ‰" << conf2 * 100 << "%" << "çš„æ¦‚çŽ‡æ˜¯ä¸ªäººå‘¢ï¼" << endl;
 	}
 }
 
-float* mat_1d(Mat &img)
+float* mat_1d(Mat& img)
 {
 	int row = img.rows;
 	int col = img.cols;
 	int n = row * col;
-	float* res = new float[3*n];
+	float* res = new float[3 * n];
 	for (int i = 0; i < row; i++)
 	{
 		uchar* p = img.ptr<uchar>(i);
-		for (int j = 0; j < col-1; j += 4)
+		for (int j = 0; j < col - 1; j += 4)
 		{
-			res[i * col + j] = (float)p[3*j+2] / (float)255;
-			res[i * col + j+1] = (float)p[3*j + 5] / (float)255;
-			res[i * col + j+2] = (float)p[3*j + 8] / (float)255;
-			res[i * col + j+3] = (float)p[3 * j + 11] / (float)255;
-			res[n+i * col + j] = (float)p[3*j+1] / (float)255;
-			res[n+i * col + j + 1] = (float)p[3*j + 4] / (float)255;
-			res[n+i * col + j + 2] = (float)p[3*j + 7] / (float)255;
+			res[i * col + j] = (float)p[3 * j + 2] / (float)255;
+			res[i * col + j + 1] = (float)p[3 * j + 5] / (float)255;
+			res[i * col + j + 2] = (float)p[3 * j + 8] / (float)255;
+			res[i * col + j + 3] = (float)p[3 * j + 11] / (float)255;
+			res[n + i * col + j] = (float)p[3 * j + 1] / (float)255;
+			res[n + i * col + j + 1] = (float)p[3 * j + 4] / (float)255;
+			res[n + i * col + j + 2] = (float)p[3 * j + 7] / (float)255;
 			res[n + i * col + j + 3] = (float)p[3 * j + 10] / (float)255;
-			res[2*n+i * col + j] = (float)p[3*j] / (float)255;
-			res[2*n+i * col + j + 1] = (float)p[3*j + 3] / (float)255;
-			res[2*n+i * col + j + 2] = (float)p[3*j + 6] / (float)255;
+			res[2 * n + i * col + j] = (float)p[3 * j] / (float)255;
+			res[2 * n + i * col + j + 1] = (float)p[3 * j + 3] / (float)255;
+			res[2 * n + i * col + j + 2] = (float)p[3 * j + 6] / (float)255;
 			res[2 * n + i * col + j + 3] = (float)p[3 * j + 9] / (float)255;
 		}
 	}
 	return res;
 }
 
-float* conv_relu(int cha,int row,int col,float* inp, conv_param cp)
+float* conv_relu(int cha, int row, int col, float* inp, conv_param cp)
 {
 	int n = 0;
 	int o_cha = cp.out_channels;
 	int sk = cp.kernel_size;
 	int st = cp.stride;
-	if (cp.pad == 1) 
-	{
 		float* pd_inp = new float[cha * (row * col + 2 * col + 2 * row + 4)]{ 0 };
 		for (int i = 1; i <= cha; i++)
 		{
@@ -126,11 +124,7 @@ float* conv_relu(int cha,int row,int col,float* inp, conv_param cp)
 			}
 		}
 		return res;
-	}
-	else
-	{
-
-	}
+	
 }
 
 float* maxpool(int cha, int row, int col, float* inp)
@@ -138,9 +132,9 @@ float* maxpool(int cha, int row, int col, float* inp)
 	float* res = new float[cha * row * col / 4];
 	for (int i = 0; i < cha; i++)
 	{
-		for (int j = 1; j <= row; j+=2)
+		for (int j = 1; j <= row; j += 2)
 		{
-			for (int k = 1; k <= col; k+=2)
+			for (int k = 1; k <= col; k += 2)
 			{
 				float max = inp[i * row * col + (j - 1) * col + k - 1];
 				if (inp[i * row * col + (j - 1) * col + k] > max) max = inp[i * row * col + (j - 1) * col + k];
@@ -153,6 +147,3 @@ float* maxpool(int cha, int row, int col, float* inp)
 	delete[] inp;
 	return res;
 }
-
-
-
