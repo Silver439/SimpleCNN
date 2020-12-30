@@ -16,7 +16,7 @@ float fc0_bias[2] = {-0.0040076836f, 0.00010113005f};
 
 conv_param conv_params[3] = {
     {1, 2, 3, 3, 16, conv0_weight, conv0_bias},
-    {0, 1, 3, 16, 32, conv1_weight, conv1_bias},
+    {1, 1, 3, 16, 32, conv1_weight, conv1_bias},
     {1, 2, 3, 32, 32, conv2_weight, conv2_bias}
 };
 fc_param fc_params[1] = {
