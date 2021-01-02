@@ -81,9 +81,9 @@ project2
 
 * 最后的flatten过程在主函数中进行，最后可以得到背景和人脸的confidence scores。
 
-  <img src="C:\Users\Admin\Desktop\Screenshot 2021-01-02 111118.png" alt="Screenshot 2021-01-02 111118" style="zoom:50%;" />
+  <img src="https://github.com/Silver439/SimpleCNN/blob/main/picture/Screenshot%202021-01-02%20111118.png" alt="Screenshot 2021-01-02 111118" style="zoom:50%;" />
 
-<img src="C:\Users\Admin\Desktop\Screenshot 2021-01-02 111145.png" alt="Screenshot 2021-01-02 111145" style="zoom:50%;" />
+<img src="https://github.com/Silver439/SimpleCNN/blob/main/picture/Screenshot%202021-01-02%20111145.png" alt="Screenshot 2021-01-02 111145" style="zoom:50%;" />
 
 
 
