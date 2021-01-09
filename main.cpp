@@ -8,41 +8,49 @@ extern fc_param fc_params[1];
 float* mat_1d(Mat&);
 float* conv_relu(int, int, int, float*, conv_param&);
 float* maxpool(int, int, int, float*);
+void geem(float*);
 
 float* quick_conv_relu(int cha, int row, int col, float* inp, conv_param& cp);
 void matrixproduct(float* C, float* A,int r,int col,int c,float* B);
 
 int main()
 {
-	Mat img = imread("10.jpg");
-	float* res = mat_1d(img);
 	clock_t start, End;
 	start = clock();
-
-	float* p0 = conv_relu(3, 128, 128, res, conv_params[0]);
-	float* p1 = maxpool(16, 64, 64, p0);
-
-	float* p2 = conv_relu(16, 32, 32, p1, conv_params[1]);
-	float* p3 = maxpool(32, 32, 32, p2);
-
-	float* p4 = conv_relu(32, 16, 16, p3, conv_params[2]);
-
-	float* p5 = new float[2]{ 0 };
-	for (int i = 0; i < 2048; i++)
+	try
 	{
-		p5[0] += fc_params[0].p_weight[i] * p4[i];
-		p5[1] += fc_params[0].p_weight[i + 2048] * p4[i];
+		Mat img = imread("lena1.jpg");
+		if (img.cols * img.rows != 128 * 128)
+		{
+			throw - 1;
+		}
+		else {
+			float* res = mat_1d(img);
+
+			float* p0 = quick_conv_relu(3, 128, 128, res, conv_params[0]);
+
+			float* p1 = maxpool(16, 64, 64, p0);
+
+			float* p2 = quick_conv_relu(16, 32, 32, p1, conv_params[1]);
+
+			float* p3 = maxpool(32, 32, 32, p2);
+
+			float* p4 = quick_conv_relu(32, 16, 16, p3, conv_params[2]);
+
+			geem(p4);
+
+			End = clock();
+			double endtime = (double)(End - start) / CLOCKS_PER_SEC;
+			cout << "Total time:" << endtime * 1000 << "ms" << endl;
+
+			return 0;
+		}
 	}
-	p5[0] += fc_params[0].p_bias[0];
-	p5[1] += fc_params[0].p_bias[1];
-	float conf1, conf2;
-	conf1 = exp(p5[0]) / (exp(p5[0]) + exp(p5[1]));
-	conf2 = exp(p5[1]) / (exp(p5[0]) + exp(p5[1]));
-	cout << "backgrond:" << conf1 << endl;
-	cout << "face:" << conf2 << endl;
-	End = clock();
-	double endtime = (double)(End - start) / CLOCKS_PER_SEC;
-	cout << "Total time:" << endtime * 1000 << "ms" << endl;
+	catch (int d)
+	{
+		if(d==-1) cout << "This picture's size is not 128*128!";
+		return 0;
+	}
 }
 
 float* mat_1d(Mat& img)
@@ -257,6 +265,24 @@ float* conv_relu(int cha, int row, int col, float* inp, conv_param &cp)
 		delete[] inp;
 		return res;
 	}
+}
+
+void geem(float* p4)
+{
+	float* p5 = new float[2]{ 0 };
+	for (int i = 0; i < 2048; i++)
+	{
+		p5[0] += fc_params[0].p_weight[i] * p4[i];
+		p5[1] += fc_params[0].p_weight[i + 2048] * p4[i];
+	}
+	p5[0] += fc_params[0].p_bias[0];
+	p5[1] += fc_params[0].p_bias[1];
+	float conf1, conf2;
+	conf1 = exp(p5[0]) / (exp(p5[0]) + exp(p5[1]));
+	conf2 = exp(p5[1]) / (exp(p5[0]) + exp(p5[1]));
+	cout << "backgrond:" << conf1 << endl;
+	cout << "face:" << conf2 << endl;
+	delete[] p4;
 }
 
 float* maxpool(int cha, int row, int col, float* inp)
